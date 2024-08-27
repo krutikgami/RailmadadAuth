@@ -1,5 +1,4 @@
 import mongoose,{Schema} from "mongoose";
-// import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const userSchema = new Schema( 
@@ -7,10 +6,9 @@ const userSchema = new Schema(
     name:{
         type:String,
         required : true,
-        unique:true,
         lowercase:true,
         trim:true,
-        index:true        //For optimize Searching in database
+        index:true        
     },
     
     password:{
@@ -23,12 +21,15 @@ const userSchema = new Schema(
     },
     mobileno:{
         type:Number,
+        required:true,
+        unique:true
     },
     email:{
         type:String,
         unique:true,
+        required:true,
         lowercase:true,
-        trim:true,                   //For optimize Searching in database
+        trim:true,                  
     },
 
     refreshToken:{
@@ -48,35 +49,5 @@ userSchema.methods.ispasswordCorrect = async function(password){
   return await bcrypt.compare(password,this.password)
 }
 
-// userSchema.methods.generateAccessToken = function(){        //Short Lived Token for expire
-//     jwt.sign(
-//      {
-//         _id : this._id,
-//         email : this.email,
-//         username: this.username,
-//         fullName: this.fullName,
-//     },
-//     process.env.ACCESS_TOKEN_SECRET,
-//     {
-//         expiresIn:process.env.ACCESS_TOKEN_EXPIRY
-//     } 
-// )
-// }
-
-// userSchema.methods.generateRefreshToken = function(){    // Long Lived Token expire
-//     jwt.sign(
-//         {
-//            _id : this._id,
-//            email : this.email,
-//            username: this.username,
-//            fullName: this.fullName,
-//        },
-//        process.env.REFRESH_TOKEN_SECRET,
-//        {
-//            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
-//        }
-       
-//    )
-// }
 
 export const User = mongoose.model("User",userSchema)
