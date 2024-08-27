@@ -15,7 +15,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are Required");
   }else if(password != confirmpassword){
     return res.status(400).json(
-      new ApiResponse(400, "Confirm Password is not valid") 
+      new ApiResponse(400, null,"Confirm Password is not valid") 
     );
   }
 
@@ -25,7 +25,7 @@ const registerUser = AsyncHandler(async (req, res) => {
 
   if (existedUser) {
     return res.status(400).json(
-      new ApiResponse(400, "User Already existed!!") 
+      new ApiResponse(400, null, "User Already existed!!") 
     );
   }
   
@@ -40,13 +40,13 @@ const registerUser = AsyncHandler(async (req, res) => {
 
   const createdUser = await User.findById(user._id).select(
     
-    "-password " 
+    "-password -confirmpassword"
   );
 
   if (!createdUser) {
    
     return res.status(400).json(
-      new ApiResponse(400, "User not created") 
+      new ApiResponse(400, null, "User not created") 
     );
   }
 
@@ -72,7 +72,7 @@ const loginUser = AsyncHandler(async (req, res) => {
 
   if (!user) {
     return res.status(400).json(
-      new ApiResponse(400, "User Not found") 
+      new ApiResponse(400,null, "User Not found") 
     );
   }
 
@@ -80,12 +80,12 @@ const loginUser = AsyncHandler(async (req, res) => {
   const isPasswordValid = await user.ispasswordCorrect(password);
   if (!isPasswordValid) {
     return res.status(400).json(
-      new ApiResponse(400, "Password is Invalid") 
+      new ApiResponse(400, null,"Password is Invalid") 
     );
   }
 
 
-  const loggedInUser = await User.findById(user._id).select("-password").lean();
+  const loggedInUser = await User.findById(user._id).select("-password -confirmpassword").lean();
 
   if (loggedInUser) {
     console.log("User is Logged In");
