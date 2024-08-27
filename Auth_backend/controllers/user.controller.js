@@ -14,7 +14,9 @@ const registerUser = AsyncHandler(async (req, res) => {
   if ( !name || !password || !confirmpassword || !mobileno || !email) {
     throw new ApiError(400, "All fields are Required");
   }else if(password != confirmpassword){
-    throw new ApiError(400, "Please check the confirm password");
+    return res.status(400).json(
+      new ApiResponse(400, "Confirm Password is not valid") 
+    );
   }
 
   const existedUser = await User.findOne({
@@ -22,7 +24,9 @@ const registerUser = AsyncHandler(async (req, res) => {
 })
 
   if (existedUser) {
-    throw new ApiError(400, "User with email or mobile no already exist");
+    return res.status(400).json(
+      new ApiResponse(400, "User Already existed!!") 
+    );
   }
   
   const user = await User.create({
@@ -41,7 +45,9 @@ const registerUser = AsyncHandler(async (req, res) => {
 
   if (!createdUser) {
    
-    throw new ApiError(500, "Something went wrong while registring the user");
+    return res.status(400).json(
+      new ApiResponse(400, "User not created") 
+    );
   }
 
 
@@ -65,13 +71,17 @@ const loginUser = AsyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "User not found");
+    return res.status(400).json(
+      new ApiResponse(400, "User Not found") 
+    );
   }
 
 
   const isPasswordValid = await user.ispasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid Password");
+    return res.status(400).json(
+      new ApiResponse(400, "Password is Invalid") 
+    );
   }
 
 
